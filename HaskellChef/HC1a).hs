@@ -30,5 +30,12 @@ data Plato = Plato {
 -- a) endulzar: dada una cantidad de gramos de azúcar, le agrega ese componente a un plato.
 -- Respuesta: 
 
+{- IMPORTANTE!! 
+Si releemos los trucos, osea las funciones, en realidad a los campos que se buscan simular cambios son a los de los platos, entonces si queremos crear "mapX" van a ser para los campos
+de los platos (no hay trucos a modelar que tengan como fin simular un cambio de un participante), entonces arrancamos por eso -}
 
+mapDificultad :: (Int -> Int) -> Plato -> Plato
+mapDificultad funcionModificacion unPlato = unPlato { dificultad = funcionModificacion . dificultad $ unPlato }
 
+mapComponentes:: ([Componente] -> [Componente])-> Plato -> Plato
+mapComponentes funcionModificacion unPlato = unPlato { componentes = funcionModificacion . componentes $ unPlato }
