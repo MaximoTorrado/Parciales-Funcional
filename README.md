@@ -1,0 +1,2 @@
+# Parciales-Funcional
+Gloria Dios
