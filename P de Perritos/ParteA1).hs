@@ -127,5 +127,9 @@ zara = Perro {
    diaDeCampo               720               -}
 -- Respuesta: 
 
-
+guarderiaPdePerritos :: Guarderia
+guarderiaPdePerritos = Guarderia {
+    nombre = "GuarderiaPdePerritos",
+    rutina = [(jugar, 30), (ladrar 18, 20), (regalar "pelota", 0), (diaDeSpa, 120), (diaDeCampo, 720)]
+}
 
