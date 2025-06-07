@@ -137,8 +137,7 @@ cansadito unPerro = energia unPerro < 5
 
 {- ¡Infinita diversión! ♾️ Pi es un perrito un poco especial… Su raza es labrador y tiene muchos, muchos, incontables juguetes favoritos. Con la particularidad de que son todas 
 soguitas numeradas del 1 al infinito. Su tiempo de permanencia es de 314 minutos y su energía es de 159.
-Luego de modelar a Pi, respondé las siguientes preguntas justificando y escribiendo la consulta que harías en la consola:
-1) ¿Sería posible saber si Pi es de una raza extravagante?  -}
+Luego de modelar a Pi, respondé las siguientes preguntas justificando y escribiendo la consulta que harías en la consola: -}
 -- Respuesta: 
 
 -- Modelamos primero a Pi
@@ -158,9 +157,47 @@ el String "Soguita" con dicho n, luego esta funcion que hasta ahora es individua
 de tipo elemento de una lista) con "Soguita" y asi "infinitamente" (no tanto porque lazy evaluation lo para)  -}
 sogasInfinitas = map (\n -> "Soguita " ++ show n) [1 ..]
 
-{- Luego, si podra saber si es o no de raza extravagante, ya que como lo unico que necesita esta funcion es mirar el campo raza de un perro, entonces la lista infinita no rompe (todo
-esto gracias a lazy evaluation)   -}
+-- 1) ¿Sería posible saber si Pi es de una raza extravagante? 
+-- Respuesta:
 
-{- 2)¿Qué pasa si queremos saber si Pi tiene…  algún huesito como juguete favorito? … alguna pelota luego de pasar por la Guardería de Perritos? … la soguita 31112?  -}
--- Respuesta: 
+{- Si podra saber si es o no de raza extravagante, ya que como lo unico que necesita esta funcion es mirar el campo raza de un perro, entonces nunca se evalua la lista infinita ya
+que nunca entramos al campo que inicia dicha lista (gracias a lazy evaluation) -}
+
+-- 2) ¿Qué pasa si queremos saber si Pi tiene a) algún huesito como juguete favorito b) alguna pelota luego de pasar por la Guardería de Perritos c) la soguita 31112  -}
+-- Respuesta:
+
+{- a) No, el tema es que aca si estamos entrando al campo "juguetesFavoritos" que es una lista infinita, y no le estamos poniendo ningun tope con alguna otra funcion como por ejemplo
+que tome n cantidad de esa lista infinita y se fije si hay un string "huesito", ademas como sabemos que solo tiene "Soguita 1", "Soguita 2",... iria infinitamente buscando y nunca
+cortaria (Una forma de zafarla seria poniendole un limite con un take n y que de la lista infinita se fije n elementos)
+
+b) No, porque nosotros la funcion que usamos para agregar ciertos juguetes lo hicimos para que agregue al principio, entonces luego de un dia de campo perderia ese primer juguete
+que justamente es el que estamos buscando e iria infinitamente buscando eso entre las soguitas, entonces no (Y dado el caso que agregaramos al final creo que tampoco podriamos ya
+que la lista infinita no tiene final entonces no podemos agregar nada al final)
+
+c) Aca si podriamos usando "Soguita 31112 `elem` (juguetesFavoritos pi)" ya que aca esta busqueda puede evaluar y terminar llegando a un resultado, eventualmente encontrara dicho
+String en la lista, y no seguira evaluando luego de terminar  -}
+
+{- 3) ¿Es posible que Pi realice una rutina? -}
+-- Respuesta
+
+{- Habiamos planteando anteriormente que un perro puede realizar una rutina en caso que su tiempo de permanencia sea menor que el tiempo total de la rutina, al menos para esta
+guarderia P de Perritos, que tiene tiempo total 890, tiene menos tiempo de permanencia entonces no podemos hacer que haga esta rutina de esta guarderia, otra rutina de otra guarderia
+con quizas otros tiempos es posible  -}
+
+
+{- 4) ¿Qué pasa si le regalamos un hueso a Pi? -}
+-- Respuesta:
+
+{- Solo sera posible si agregamos al principio ya que gracias a evaluacion lazy podremos ingresar ese elemento y luego no deberemos procesar los demas porque la funcion de agregar
+solo hace eso y no mira los demas elementos, en caso de que estemos agregando al final no podremos porque al ser infinita no tiene un tope -}
+
+
+
+
+
+
+
+
+
+
 
