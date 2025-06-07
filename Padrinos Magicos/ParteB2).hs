@@ -66,52 +66,34 @@ esSuperMaduro unChico = edad unChico > 18 && sabeManejar unChico
 sabeManejar :: Chico -> Bool
 sabeManejar unChico = elem "Manejar" (habilidades unChico)
 
-{- B) 2) Las chicas tienen un nombre, y una condición para elegir al chico con el que van ir al baile. Ejemplos:
--- para Trixie la única condición es que el chico no sea Timmy, ya que nunca saldría con él
-trixie = Chica “Trixie Tang” noEsTimmy
-vicky = Chica “Vicky” (tieneHabilidad “ser un supermodelo noruego”)
+{- B) 2) Las chicas tienen un nombre, y una condición para elegir al chico con el que van ir al baile. Ejemplos: para Trixie la única condición es que el chico no sea Timmy, ya que 
+nunca saldría con él : trixie = Chica “Trixie Tang” noEsTimmy
+                       vicky = Chica “Vicky” (tieneHabilidad “ser un supermodelo noruego”)
 
-Se pide definir el data Chica y desarrollar las siguientes funciones: 
-a. quienConquistaA unaChica losPretendientes: Dada una chica y una lista de pretendientes, devuelve al que se queda con la chica, es decir, el primero que cumpla con la condición que
-ella quiere. Si no hay ninguno que la cumpla, devuelve el último pretendiente (una chica nunca se queda sola). (Sólo en este punto se puede usar recursividad)
-b. Dar un ejemplo de consulta para una nueva chica, cuya condición para elegir a un chico es que este sepa cocinar.  -}
--- Respuesta: 
+Se pide definir el data Chica -}
+-- Respuesta:
 
-{- Modelamos el data Chica, que tiene un nombre y una condicion (al llamar a "tieneHabilidad" tendra su mismo tipado) esto podriamos delegarlo al tipado de "tieneHabilidad" pero para 
-no andar mirando donde lo definimos por ahora lo dejamos asi          -}
+{- Sabemos que el data de una Chica tiene un nombre (String) y una condicion, que abstrayendo la logica debe basicamente recibir un chico y fijarse si es o no es apto para ella, esto
+tambien nos damos cuenta si miramos las funciones que usan en el cuerpo de cada una, trixie usa "noEsTimmy" si bien no esta definida pareciera que toma un chico y devolveria True en
+caso que no sea timmy, luego trixie usa "tieneHabilidad "ser un supermodelo noruego"" que si vemos el tipado de "tieneHabilidad" tambien recibe un chico mas una habilidad y devuelve 
+un booleano (aplicado parcialmente), entonces      -}
+
 type Condicion = Chico -> Bool
-
 data Chica = Chica {
     nombreChica :: String,
     condicion :: Condicion 
-}
+} 
 
-{- B) 2) a) quienConquistaA unaChica losPretendientes: Dada una chica y una lista de pretendientes, devuelve al que se queda con la chica, es decir, el primero que cumpla con la 
+-- EXTRA!! Un posible planteo para "noEsTimmy"
+noEsTimmy :: Chico -> Bool
+noEsTimmy unChico = nombre unChico /= "Timmy"
+
+{- 2) B) a) quienConquistaA unaChica losPretendientes: Dada una chica y una lista de pretendientes, devuelve al que se queda con la chica, es decir, el primero que cumpla con la 
 condición que ella quiere. Si no hay ninguno que la cumpla, devuelve el último pretendiente (una chica nunca se queda sola). (Sólo en este punto se puede usar recursividad) -}
 -- Respuesta: 
 
-type Pretendientes = [Chico]
-
-{- IMPORTANTE!!
-Aca si podemos usar logica de recursividad recibiendo (cabeza : cola) convertilo en (pretendiente : demas) y asi-}
-
-quienConquistaA :: Chica -> Pretendientes -> Chico
--- Caso base donde si se da el caso que es el unico pretendiente entonces devolvemos ese pretendiente (si no tiene opciones la chica que se cague xD, podriamos obviarla)
--- quienConquistaA _ [unicoChico] = unicoChico
-quienConquistaA unaChica [unicoChico] = unicoChico
-
-{- Caso recursivo: recibimos entonces por logica de listas y Pattern Matching la cabeza (que representa al pretendiente actual, o chico actual) y la cola (que son el resto) 
- -}
-quienConquistaA unaChica (chicoActual : restoDeChicos) | condicion unaChica chicoActual = chicoActual 
-                                                       | otherwise = quienConquistaA unaChica restoDeChicos
-
-
-
-
-
-
-
-
+quienConquistaA :: Chica -> [Chico] -> Chico
+quienConquistaA unaChica losPretendientes = 
 
 
 
