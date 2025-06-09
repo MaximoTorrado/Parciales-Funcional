@@ -1,7 +1,8 @@
 import System.Win32.DebugApi (DebugEventInfo)
-{- Fairly odd parents : “Timmy is an average kid that no one understands...” En la ciudad de Dimmsdale, los chicos pueden contar con padrinos mágicos que cumplen sus deseos. Y Jorgen 
-Von Strángulo, encargado de supervisar toda la actividad mágica del lugar, nos encargó un sistema funcional para poder entender a los ahijados.
-De los chicos se conoce su nombre, edad, sus habilidades y sus deseos. Por ejemplo: timmy = Chico “Timmy” 10 [“mirar television”, “jugar en la pc”] [serMayor]
+{- Fairly odd parents : “Timmy is an average kid that no one understands...” En la ciudad de Dimmsdale, los chicos pueden contar con 
+padrinos mágicos que cumplen sus deseos. Y Jorgen Von Strángulo, encargado de supervisar toda la actividad mágica del lugar, nos 
+encargó un sistema funcional para poder entender a los ahijados. De los chicos se conoce su nombre, edad, sus habilidades y sus deseos.
+Por ejemplo: timmy = Chico “Timmy” 10 [“mirar television”, “jugar en la pc”] [serMayor]
 A. Concediendo deseos
 1. Desarrollar los siguiente deseos y declarar el data Chico -}
 -- Respuesta: 
@@ -35,13 +36,13 @@ mapDeseos funcionModificacion unChico = unChico { deseos = funcionModificacion .
 aprenderHabilidades :: [Habilidad] -> Deseos
 aprenderHabilidades unasHabilidades unChico = mapHabilidades (++ unasHabilidades) unChico             
 
-{- 1) b) serGrosoEnNeedForSpeed unChico: dado un chico, le agrega las habilidades de jugar a todas las versiones pasadas y futuras del Need For Speed, que son: “jugar need for speed
-1”, “jugar need for speed 2”, etc.   -}
+{- 1) b) serGrosoEnNeedForSpeed unChico: dado un chico, le agrega las habilidades de jugar a todas las versiones pasadas y futuras
+del Need For Speed, que son: “jugar need for speed 1”, “jugar need for speed 2”, etc.   -}
 -- Respuesta:  
 
 {- IMPORTANTE!!
-Si bien pareciera que estamos "repitiendo logica" al llamar a "mapHabilidades" pero como en ambas estamos pasandole una funcion aplicada parcialmente "++ String", mas que eso no
-podemos andar delegando porque estamos exprimiendo bien bien el "mapHabilidades" -}
+Si bien pareciera que estamos "repitiendo logica" al llamar a "mapHabilidades" pero como en ambas estamos pasandole una funcion 
+aplicada parcialmente "++ String", mas que eso no podemos andar delegando porque estamos exprimiendo bien bien el "mapHabilidades" -}
 
 serGrosoEnNeedForSpeed :: Deseos
 serGrosoEnNeedForSpeed unChico = mapHabilidades (++ versionesPasadasNeedForSpeed) unChico
