@@ -1,0 +1,12 @@
+-- Error Comun 1: Uso redundante de los valores booleanos (para las condiciones)
+{- energiaDeGrito grito 
+      | (mojoLaCama grito == True) = nivelTerror grito * (intensidad grito) ^ 2
+      | otherwise = (nivelTerror grito) * 3 + intensidad grito -}
+
+
+{- Error Común 2: No delegar apropiadamente
+   energiaDeGrito grito
+       |mojoLaCama grito = (length.onomatopeya) grito * (intensidad grito) ^ 2
+       |otherwise    = 3 * (length.onomatopeya) grito + intensidad grito -}
+
+-- La solucion funcion mas como vimos anteriormente conceptualmente es incorrecta porque oculpa el "concepto propio del dominio" del enunciado que es "nivelTerror" osea al tener titulo tenemos que partirlo y definir
