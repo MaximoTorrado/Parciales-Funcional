@@ -7,7 +7,7 @@ De cada una conocemos el nombre y la cantidad disponible. Algunos ejemplos son: 
 data Ninja = Ninja {
   nombre :: String, 
   herramientas :: [Herramienta], 
-  justus :: [Jutsu],  -- jutsus :: [Jutsu],       nosotros aca planteamos el atributo jutsus pero todavia no sabemos que son hasta que los modelemos
+  jutsus :: [Jutsu],  -- jutsus :: [Jutsu],       nosotros aca planteamos el atributo jutsus pero todavia no sabemos que son hasta que los modelemos
   rango :: Int
 } -- deriving Show
 
@@ -161,9 +161,20 @@ mapNinjasEnemigos f mision = mision { ninjasEnemigos = f . ninjasEnemigos $ misi
 fuerzaDeUnCentenar' :: Mision -> Mision
 fuerzaDeUnCentenar' mision = mapNinjasEnemigos (filter ((<5) . rango)) mision
 
-
 -- para ambas cuando usamos la alternativa del accesor, tenemos que tener en cuenta que si miramos el accesor, ya se encarga de conseguir [Ninja] se "ninjasEnemigos" entonces nosotros tenemos que pensar solo en la composicion de
 -- una funcion que ya que ese [Ninja] de "ninjasEnemigos" y eso es lo que le pasaremos, siempre pensando en lo secuencial de la composicion
+
+-- Se pide modelar ejecutarMision. Cuando se ejecuta una misión, todos los ninjas del grupo usan todos sus jutsus en la misión. Luego, si la misión es copada o factible, se cumple. Caso contrario la misión se falla.
+ejecutarMision :: [Ninja] -> Mision -> [Ninja]
+ejecutarMision ninjas mision = completarMision ninjas . usarTodosSusJutsus ninjas $ mision
+
+usarTodosSusJutsus :: [Ninja] -> Mision -> Mision
+usarTodosSusJutsus ninjas mision = foldr ($) mision . concatMap jutsus $ ninjas 
+
+completarMision :: [Ninja] -> Mision -> [Ninja]
+completarMision ninjas mision
+  | esCopada mision || esFactible ninjas mision = cumplirMision ninjas mision  -- osea se los promueve un rango
+  | otherwise = fallarMision ninjas mision  -- osea se filtra y los que quedan pierden 2 rangos
 
 -- notamos ahora lo que tiene en comun todos los Jutsus
 type Jutsu = Mision -> Mision

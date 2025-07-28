@@ -89,8 +89,6 @@ Por ejemplo:
 produccionEnergeticaGritos [sullivan, osito, chuck] campamentoDeExploradores
 999999                                                                           -}
 
--- una forma de pensar esto es "la energia que los monstruos obtienen de un campamento es la sumatoria de las "energiaDeGrito" de los gritos obtenidos al asustarlo"
-
 produccionEnergeticaGritos :: [Niño -> Grito] -> [Niño] -> Int
 produccionEnergeticaGritos monstruos niños = (sumatoriaEnergia . asustarCampamento monstruos) niños
 
@@ -103,6 +101,59 @@ sumatoriaEnergia gritos = foldl (\acu x -> acu + energiaDeGrito x) 0 gritos
 aplanar :: [[a]] -> [a]
 aplanar listaDeListas = foldl (++) [] listaDeListas
 
--- Recibimos unos "monstruos" que son una [Niño -> Grito], mas unos niños que son [Niño], nosotros queremos aplicar todos los elementos de [Niño -> Grito] a los elementos de [Niño] para conseguir [Grito], al cual querremos aplicar a todos sus elementos la funcion "energiaDeGrito" para obtener una sumatoria de la misma (foldl)
--- 1) para aplicar todos los elementos de [Niño -> Grito] a los elementos de [Niño] usamos "asustarCampamento", recibe ambos y usa un map que recibe una funcion incognita y [Niño -> Grito], la incognita va recibiendo los elementos de "monstruos" con "x", como cada x es "Niño -> Grito" y quiero aplicarlo a un [Niño] entonces no solo aplico x a los "niños" si no que tengo que usar una que sea secuencial, entonces "map x niños" aplica cada elemento de [Niño] a "Niño -> Grito", ahora este es solo un elemento de [Niño -> Grito] entonces al aplicar cada elemento de [Niño] a cada elemento de [Niño -> Grito] obtenemos una [[Grito]] = [ [(x,y,z),...,(x,y,z)],...,[(x,y,z),...,(x,y,z)] ], entonces nosotros queremos "aplanar" [[Grito]] a [Grito], que es como un concat pero creado por nosotros
--- 2) ya con [Grito] ahora solo queremos hacer la sumatoria, osea a cada elemento de [Grito] aplicarle "energiaDeGrito" y obtener un Int, entonces esto es un foldl que recibe una incognita una semilla y [Grito], la incognita por su sintaxis toma primero "acu" que es el valor de la semilla, que al ser una sumatoria sera 0, y los elementos de [Grito] en "x", entonces lo que haremos sera una SUMA ITERATIVA donde sumamos "acu" mas aplicar "energiaDeGrito" a cada elemento de [Grito], osea a cada grito
+{- 6) Ante la declinación en la producción energética de Monsters inc debido a las nuevas generaciones que ya no se asustan de monstruos obsoletos, la empresa ha decidido poner en marcha un proyecto de transformación de risas en energía, para lo que contrató a comediantes.
+Las risas se representan por tuplas en las que se indica la duración y la intensidad. La energía que producen es la duración elevada a la intensidad. Cada comediante recibe un niño y devuelve una risa.
+Por ejemplo:
+Capusotto produce una risa de duración igual al doble de la edad del niño y la misma intensidad. -}
+
+type Risa = (Int, Int)
+
+energiaRisa :: Risa -> Int
+energiaRisa (duracion, intensidad) = duracion ^ intensidad
+
+-- Hacer la función produccionEnergeticaRisas que devuelve el total de energía producido por enviar a un equipo de comediantes a un campamento.  Si es necesario, hacer funciones auxiliares pero no modificar las ya hechas.  
+produccionEnergeticaRisas :: [Niño -> Risa] -> [Niño] -> Int
+produccionEnergeticaRisas comediantes niños = (sumatoriaEnergiaRisas . hacerReirCampamento comediantes) niños
+
+-- planteamos las 2 variantes
+hacerReirCampamento :: [Niño -> Risa] -> [Niño] -> [Risa]
+hacerReirCampamento comediantes niños = (concat . map (\x -> pam comediantes x)) niños
+
+hacerReirCampamento' :: [Niño -> Risa] -> [Niño] -> [Risa]
+hacerReirCampamento' comediantes niños = (concat . map (\x -> map ($ x) comediantes)) niños
+
+sumatoriaEnergiaRisas :: [Risa] -> Int
+sumatoriaEnergiaRisas risas = (sum . map energiaRisa) risas
+
+
+{- 7) Hacer una única función produccionEnergetica que reemplace a produccionEnergeticaRisas y a produccionEnergeticaGritos y que aplicada con los argumentos adecuados ermita obtener lo mismo que ellas, es decir, que reciba un conjunto de monstruos o un conjunto de comendiantes y devuelva la energía producida  -}
+
+-- La solucion anterior es muy parecida a la solucion del ante-anterior, entonces buscamos ahora generalizar lo igual y parametrizar lo distinto, este punto entonces busca una funcion mas generica que resuelva el problema de la produccion energetiva ya sea de gritos o risas, osea que reciba monstruos o comediantes y ambos hagan lo mismo
+
+{- produccionEnergeticaGritos :: [Niño -> Grito] -> [Niño] -> Int
+produccionEnergeticaGritos monstruos niños = (sumatoriaEnergia . asustarCampamento monstruos) niños 
+
+produccionEnergeticaRisas :: [Niño -> Risa] -> [Niño] -> Int
+produccionEnergeticaRisas comediantes niños = (sumatoriaEnergiaRisas . hacerReirCampamento comediantes) niños 
+
+asustarCampamento :: [Niño -> Grito] -> [Niño] -> [Grito]
+asustarCampamento monstruos niños = (aplanar . map (\x -> map x niños)) monstruos  (esto como para denotar que puedo pensar en aplicar todos elementos de [x -> y] en [x] o al reves tambien todos [x] en [x -> y])
+
+hacerReirCampamento' :: [Niño -> Risa] -> [Niño] -> [Risa]
+hacerReirCampamento' comediantes niños = (concat . map (\x -> map ($ x) comediantes)) niños  
+
+sumatoriaEnergiaRisas :: [Risa] -> Int
+sumatoriaEnergiaRisas risas = (sum . map energiaRisa) risas                                                                                -}
+
+-- Es decir, estas soluciones está acopladas en sus nombres de variables y la  función que aplican (energiaRisas o energíaGritos). Entonces, simplemente, parametricemos esas funciones, y de paso, utilicemos nombres más genéricos:
+
+-- produccionEnergetica :: [Niño -> a] -> [Niño] -> Int
+-- produccionEnergetica productores niños = (sumatoriaEnergia . extraerEnergiaCampamento productores) niños
+
+-- sumatoriaEnergiaGeneral :: [a] -> Int
+-- sumatoriaEnergiaGeneral producciones energiaProduccion = (sum . map energiaProduccion) producciones
+
+-- extraerEnergiaCampamento :: [Niño -> a] -> [Niño] -> [a]
+-- extraerEnergiaCampamento productores niños = (concat.map (\niño -> pam niño productores)) niños
+
+-- bueno se ve que el tipado en algun punto esta mal, o directamente algo de la definicion, pero en general asi es la generalizacion de la misma

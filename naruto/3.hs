@@ -114,9 +114,9 @@ mapCantidadDeNinjas f mision = mision { cantidadDeNinjas = f . cantidadDeNinjas 
 clonesDeSombra' :: Int -> Jutsu -- Mision -> Mision
 clonesDeSombra' clones mision = mapCantidadDeNinjas (subtract clones) mision
 
+-- g. fuerzaDeUnCentenar: elimina a todos los enemigos con rango menor a 500. ¡Hora de la acción!
 fuerzaDeUnCentenar :: Jutsu -- Mision -> Mision
 fuerzaDeUnCentenar mision = mision { ninjasEnemigos = filter ((<5) . rango) (ninjasEnemigos mision) }
-
 
 mapNinjasEnemigos :: ([Ninja] -> [Ninja]) -> Mision -> Mision
 mapNinjasEnemigos f mision = mision { ninjasEnemigos = f . ninjasEnemigos $ mision }
@@ -124,6 +124,17 @@ mapNinjasEnemigos f mision = mision { ninjasEnemigos = f . ninjasEnemigos $ misi
 fuerzaDeUnCentenar' :: Mision -> Mision
 fuerzaDeUnCentenar' mision = mapNinjasEnemigos (filter ((<5) . rango)) mision
 
+-- Se pide modelar ejecutarMision. Cuando se ejecuta una misión, todos los ninjas del grupo usan todos sus jutsus en la misión. Luego, si la misión es copada o factible, se cumple. Caso contrario la misión se falla.
+ejecutarMision :: [Ninja] -> Mision -> [Ninja]
+ejecutarMision ninjas mision = completarMision ninjas . usarTodosSusJutsus ninjas $ mision
+
+usarTodosSusJutsus :: [Ninja] -> Mision -> Mision
+usarTodosSusJutsus ninjas mision = foldr ($) mision . concatMap jutsus $ ninjas 
+
+completarMision :: [Ninja] -> Mision -> [Ninja]
+completarMision ninjas mision
+  | esCopada mision || esFactible ninjas mision = cumplirMision ninjas mision
+  | otherwise = fallarMision ninjas mision
 
 -- notamos ahora lo que tiene en comun todos los Jutsus
 type Jutsu = Mision -> Mision
@@ -152,7 +163,6 @@ zetsu n = Ninja {
   jutsus = [],
   herramientas = []
 } 
-
 
 -- Sabiendo esto y teniendo en cuenta un equipo de ninjas finitos, responder qué devuelve y por qué en las siguientes funciones: 
 -- a. esDesafiante

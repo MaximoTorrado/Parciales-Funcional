@@ -126,29 +126,69 @@ ejercicios rutina = map fst rutina
 -- de la lista de tuplas entonces que representa una actividad queremos solo la primera para tener una [Ejercicio] entonces mapeamos con fst
 
 -- Dados unos perros, reportar todos los que quedan cansados después de realizar la rutina de una guardería. Es decir, que su energía sea menor a 5 luego de realizar todos los ejercicios. 💤
-
 perrosCansados :: Guarderia -> [Perro] -> [Perro]
 perrosCansados guarderia perros = filter (estaCansados . realizarRutina guarderia) perros
 
 estaCansados :: Perro -> Bool
 estaCansados perro = (< 5) . energia $ perro
 
--- asi directamente usando lo que definimos anteriormente es mas visible, queremos filtrar [Perro] por aquellos que quedan cansados (energia menor a 5) pero luego de aplicar una rutina de una guarderia, y tenemos "realizarRutina" que si le aplicamos parcialmente la guarderia tenemos todo porque se encarga de llegar a [Ejercicio] y aplicarlo a un perro y devolver un perro despues de el ejercicio, finalmente "estaCansado" se fija de dicho perro la condicion, y el filter se encarga de hacerlo secuencialmente para cada elemento de [Perro] sin necesidad de nosotros hacelo, aunque la idea esta buena
+{- Parte C
 
--- yo lo habia pensado y planteado masomenos "de 0" guiandome por el ejercicio 6 y 7 de monsters inc donde se aplica una lista de funciones a una lista de valores, la idea no esta mal pero podria ser mas facil usando las funciones que fuimos creando anteriormente
-{- cansados :: [Perro] -> Guarderia -> [Perro]
-cansados perros guarderia = filter quedanCansados . aplicarEnPerros perros . ejercicios $ (rutina guarderia)   
+¡Infinita diversión! ♾️ Pi es un perrito un poco especial… Su raza es labrador y tiene muchos, muchos, incontables juguetes favoritos. Con la particularidad de que son todas soguitas numeradas del 1 al infinito. Su tiempo de permanencia es de 314 minutos y su energía es de 159.
+Luego de modelar a Pi, respondé las siguientes preguntas justificando y escribiendo la consulta que harías en la consola:  -}
 
--- si pensamos en aplicar cada [Ejercicio] = [Perro -> Perro] a cada [Perro]
-aplicarEnPerros :: [Perro] -> [Ejercicio] -> [Perro]
-aplicarEnPerros perros ejercicios = (concat . map (\ x -> map x perros)) ejercicios
+perroPi :: Perro 
+perroPi = Perro {
+  raza = "labrador", 
+  juguete = sogasInfinitas,
+  tiempoDePermanencia = 314,
+  energia = 159
+}
 
--- si pensamos aplicar cada [Perro] a cada [Ejercicio] = [Perro -> Perro]
-aplicarEnPerros' :: [Perro] -> [Ejercicio] -> [Perro]
-aplicarEnPerros' perros ejercicios = (concat . map (\ x -> map ($ x) ejercicios)) perros
+sogasInfinitas :: [String]
+sogasInfinitas = map (\x -> "Soguita" ++ show x) [1..]
 
-quedanCansados :: Perro -> Bool
-quedanCansados perro = energia perro < 5 -}
+-- como lo que queremos es infinitas sogas pero para eso entonces tenemos que ordenarlas en una lista infinita de [Soguita 1, Soguita 2, ..., entonces con un map con una incognita y una lista infinita que parte del 1, la incognita va tomando elementos de la lista infinita en "x" y por cada una hace "Soguita" que se concatene con el elemento de la lista "x" usando "show" 
+
+--1. ¿Sería posible saber si Pi es de una raza extravagante?
+-- Si, es posible y da "False", si bien tiene un atributo que es una lista infinita gracias a lazy evaluation solo evalua los atributos que se necesitan, y como para dictaminar esto se necesita solamente de el atributo raza entonces todo bien
+
+--esDeRazaExtravagante perroPi
+--False
+
+--2. ¿Qué pasa si queremos saber si Pi tiene…
+--  a. … algún huesito como juguete favorito? 
+tieneJuguete :: String -> Perro -> Bool
+tieneJuguete juguetazo perro  = elem juguetazo . juguete $ perro
+
+-- Depende, dado el caso que el juguete que querramos averiguar esta concatenado a la lista infinita podra encontrarlo en algun momento, ahora el caso donde no este ese juguete y nosotros esperemos un False no podremos porque nunca terminara de evaluar la lista infinita entonces termina rompiendo
+
+-- tieneJuguete "Huesito" perroPi
+-- True (si lo tiene)
+-- tieneJuguete "Huesito" perroPi
+-- -     (si no lo tiene, nunca termina de evaluar)
+
+--  b. …alguna pelota luego de pasar por la Guardería de Perritos?
+-- Si, al hacer la rutina de guarderiaDePerritos los atributos que estan en juego son energia, tiempoDePermanencia y por ultimo juguete pero a esta ultima obligatoriamente agrega al principio una pelota como juguete, esto es valido agregar al principio de una lista infinita, entonces al querer buscar dicha pelota en la lista infinita la encontrar
+
+-- realizarRutina guarderiaDePerritos perroPi . tieneJuguete "Pelota" perroPi
+-- True
+
+--  c. … la soguita 31112?
+-- Si, eventualmente encontrara dicho juguete dentro de la lista infinita porque esta contemplado en su dominio por mas grande que sea (quizas tarde un toque jajaj, mentira no tarda nada comprobado XD)
+
+-- tieneJuguete "Soguita31112" perroPi
+-- True
+
+-- 3. ¿Es posible que Pi realice una rutina?
+-- Recien lo comprobe le cambia la energia peeero al "realizarRutina" finalmente devuelve un Perro, entonces cuando quiera mostrar a perroPi que en si hace la rutina la puede hacer sin problemas, pero cuando quiera mostrarlo nunca termina de mostrar las soguitas justamente en el atributo de la lista infinita
+-- la idea que se me ocurre es hacer una funcion rutina que si le genere el cambio que es a los atributos energia y tiempoDePermanencia sin mostrarlo, pero no serviria de nada digamos y no esta en este contexto
+
+-- realizarRutina guarderiaDePerritos perroPi
+-- -      (nunca puede terminar de mostrar los juguetes)
+
+-- 4. ¿Qué pasa si le regalamos un hueso a Pi?  
+-- esta haciendo referencia a la funcion "regalar" y justamente lo mismo que la anterior la definimos para que devuelva el perro con el atributo juguetes cambiado, indiferentemente si es agregar al principio (que se podria) o al final (que no se podria) no podriamos mostrarlo nunca por lo mismo nunca termina de mostrar los juguetes
 
 
 

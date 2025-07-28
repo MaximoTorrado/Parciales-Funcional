@@ -89,8 +89,6 @@ Por ejemplo:
 produccionEnergeticaGritos [sullivan, osito, chuck] campamentoDeExploradores
 999999                                                                           -}
 
--- una forma de pensar esto es "la energia que los monstruos obtienen de un campamento es la sumatoria de las "energiaDeGrito" de los gritos obtenidos al asustarlo"
-
 produccionEnergeticaGritos :: [Niño -> Grito] -> [Niño] -> Int
 produccionEnergeticaGritos monstruos niños = (sumatoriaEnergia . asustarCampamento monstruos) niños
 
@@ -103,6 +101,55 @@ sumatoriaEnergia gritos = foldl (\acu x -> acu + energiaDeGrito x) 0 gritos
 aplanar :: [[a]] -> [a]
 aplanar listaDeListas = foldl (++) [] listaDeListas
 
--- Recibimos unos "monstruos" que son una [Niño -> Grito], mas unos niños que son [Niño], nosotros queremos aplicar todos los elementos de [Niño -> Grito] a los elementos de [Niño] para conseguir [Grito], al cual querremos aplicar a todos sus elementos la funcion "energiaDeGrito" para obtener una sumatoria de la misma (foldl)
--- 1) para aplicar todos los elementos de [Niño -> Grito] a los elementos de [Niño] usamos "asustarCampamento", recibe ambos y usa un map que recibe una funcion incognita y [Niño -> Grito], la incognita va recibiendo los elementos de "monstruos" con "x", como cada x es "Niño -> Grito" y quiero aplicarlo a un [Niño] entonces no solo aplico x a los "niños" si no que tengo que usar una que sea secuencial, entonces "map x niños" aplica cada elemento de [Niño] a "Niño -> Grito", ahora este es solo un elemento de [Niño -> Grito] entonces al aplicar cada elemento de [Niño] a cada elemento de [Niño -> Grito] obtenemos una [[Grito]] = [ [(x,y,z),...,(x,y,z)],...,[(x,y,z),...,(x,y,z)] ], entonces nosotros queremos "aplanar" [[Grito]] a [Grito], que es como un concat pero creado por nosotros
--- 2) ya con [Grito] ahora solo queremos hacer la sumatoria, osea a cada elemento de [Grito] aplicarle "energiaDeGrito" y obtener un Int, entonces esto es un foldl que recibe una incognita una semilla y [Grito], la incognita por su sintaxis toma primero "acu" que es el valor de la semilla, que al ser una sumatoria sera 0, y los elementos de [Grito] en "x", entonces lo que haremos sera una SUMA ITERATIVA donde sumamos "acu" mas aplicar "energiaDeGrito" a cada elemento de [Grito], osea a cada grito
+{- 6) Ante la declinación en la producción energética de Monsters inc debido a las nuevas generaciones que ya no se asustan de monstruos obsoletos, la empresa ha decidido poner en marcha un proyecto de transformación de risas en energía, para lo que contrató a comediantes.
+Las risas se representan por tuplas en las que se indica la duración y la intensidad. La energía que producen es la duración elevada a la intensidad. Cada comediante recibe un niño y devuelve una risa.
+Por ejemplo:
+Capusotto produce una risa de duración igual al doble de la edad del niño y la misma intensidad. -}
+
+type Risa = (Int, Int)
+
+energiaRisa :: Risa -> Int
+energiaRisa (duracion, intensidad) = duracion ^ intensidad
+
+-- Hacer la función produccionEnergeticaRisas que devuelve el total de energía producido por enviar a un equipo de comediantes a un campamento.  Si es necesario, hacer funciones auxiliares pero no modificar las ya hechas.  
+produccionEnergeticaRisas :: [Niño -> Risa] -> [Niño] -> Int
+produccionEnergeticaRisas comediantes niños = (sumatoriaEnergiaRisas . hacerReirCampamento comediantes) niños
+
+-- planteamos las 2 variantes
+hacerReirCampamento :: [Niño -> Risa] -> [Niño] -> [Risa]
+hacerReirCampamento comediantes niños = (concat . map (\x -> pam comediantes x)) niños
+
+hacerReirCampamento' :: [Niño -> Risa] -> [Niño] -> [Risa]
+hacerReirCampamento' comediantes niños = (concat . map (\x -> map ($ x) comediantes)) niños
+
+sumatoriaEnergiaRisas :: [Risa] -> Int
+sumatoriaEnergiaRisas risas = (sum . map energiaRisa) risas
+
+
+
+-- lo que queremos es a partir de unos "comediantes" [Niño -> Risa] y unos "niños" [Niño] queremos el total de energia luego de hacerlos reir, osea queremos primero hacer reir a todos los niños para conseguir [Risa] = [(duracion, intensidad),...,(duracion, intensidad)], y le queremos aplicar "energiaRisa" a cada elemento de [Risa] (que es la potencia entre ambos miembros) para obtener [1,2,23] que simula la risa de cada niño y finalmente sumar todo para obtener el total
+-- 1) para aplicar cada elemento de [Niño] a [Niño -> Risa] (que si pensamos nos dara [[Risa]] ) usamos "hacerReirCampamento" que recibe ambos, como en esta funcion mi mision es obtener [Risa] pienso en usar map con una funcion incognita y [Niño] entonces, la incognita va recibiendo los elementos de [Niño] en "x" que es un Niño, pero un solo valor no podemos aplicarlo a [Niño -> Risa] sin alguna funcion secuencial, entonces adentro podemos usar otro 1)  "map ($ x) comediantes" que significa aplica este valor a todos los elementos de [Niño -> Risa] o 2) llamar a la misma pam que se encarga de hacer lo mismo cambiando de orden de los parametros. 
+-- notamos que aplicar [Niño] a [Niño -> Risa] nos dara [[Risa]], entonces tenemos que aplanarlo, usamos "concat" que se encarga de [[x]] = [x]
+-- 2) una vez obtenida [Risa] ahora solo queremos aplicar a cada elemento de [Risa] "energiaRisa", tiene sentido ya que al ser una lista de tuplas podemos ir por cada tupla haciendo la operacion de la misma, para hacer esto de forma secuencial usamos un mapeado con "energiaRisa", luego tendriamos algo asi [1,34,2,5] entonces finalmente lo sumamos con "sum"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

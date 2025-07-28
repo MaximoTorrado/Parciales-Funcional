@@ -91,18 +91,19 @@ produccionEnergeticaGritos [sullivan, osito, chuck] campamentoDeExploradores
 
 -- una forma de pensar esto es "la energia que los monstruos obtienen de un campamento es la sumatoria de las "energiaDeGrito" de los gritos obtenidos al asustarlo"
 
+-- variante 1: usando concat y sum
 produccionEnergeticaGritos :: [Niño -> Grito] -> [Niño] -> Int
 produccionEnergeticaGritos monstruos niños = (sumatoriaEnergia . asustarCampamento monstruos) niños
 
 asustarCampamento :: [Niño -> Grito] -> [Niño] -> [Grito]
-asustarCampamento monstruos niños = (aplanar . map (\x -> map x niños)) monstruos
+asustarCampamento monstruos niños = (concat . map (\x -> map ($ x) monstruos)) niños
 
 sumatoriaEnergia :: [Grito] -> Int
-sumatoriaEnergia gritos = foldl (\acu x -> acu + energiaDeGrito x) 0 gritos
+sumatoriaEnergia gritos = (sum . map energiaDeGrito) gritos
 
-aplanar :: [[a]] -> [a]
-aplanar listaDeListas = foldl (++) [] listaDeListas
 
--- Recibimos unos "monstruos" que son una [Niño -> Grito], mas unos niños que son [Niño], nosotros queremos aplicar todos los elementos de [Niño -> Grito] a los elementos de [Niño] para conseguir [Grito], al cual querremos aplicar a todos sus elementos la funcion "energiaDeGrito" para obtener una sumatoria de la misma (foldl)
--- 1) para aplicar todos los elementos de [Niño -> Grito] a los elementos de [Niño] usamos "asustarCampamento", recibe ambos y usa un map que recibe una funcion incognita y [Niño -> Grito], la incognita va recibiendo los elementos de "monstruos" con "x", como cada x es "Niño -> Grito" y quiero aplicarlo a un [Niño] entonces no solo aplico x a los "niños" si no que tengo que usar una que sea secuencial, entonces "map x niños" aplica cada elemento de [Niño] a "Niño -> Grito", ahora este es solo un elemento de [Niño -> Grito] entonces al aplicar cada elemento de [Niño] a cada elemento de [Niño -> Grito] obtenemos una [[Grito]] = [ [(x,y,z),...,(x,y,z)],...,[(x,y,z),...,(x,y,z)] ], entonces nosotros queremos "aplanar" [[Grito]] a [Grito], que es como un concat pero creado por nosotros
--- 2) ya con [Grito] ahora solo queremos hacer la sumatoria, osea a cada elemento de [Grito] aplicarle "energiaDeGrito" y obtener un Int, entonces esto es un foldl que recibe una incognita una semilla y [Grito], la incognita por su sintaxis toma primero "acu" que es el valor de la semilla, que al ser una sumatoria sera 0, y los elementos de [Grito] en "x", entonces lo que haremos sera una SUMA ITERATIVA donde sumamos "acu" mas aplicar "energiaDeGrito" a cada elemento de [Grito], osea a cada grito
+-- tenemos "monstruos" que son [Niño -> Grito] y "niños" que son [Niño], y queremos devolver un entero que represente aplicar "energiaDeGrito" a [Grito] que devolveria aplicar cada elemento de [Niño] a cada elemento de [Niño -> Grito], entonces
+-- 1) con "asustarCampamento" recibimos [Niño -> Grito] y [Niño] entonces, si queremos aplicar cada elemento de [Niño] a [Niño -> Grito] para obtener un [Grito], uso un map que recibe una funcion incognita y [Niño], la incognita va recibiendo cada elemento de [Niño] en "x", que es un Niño, y queremos aplicarlo a [Niño -> Grito], ahora no podemos mandar "monstruos x" porque "monstruos" es una lista de funciones [Niño -> Grito] y "x" un valor solo, entonces tambien secuencialmente tenemos que aplicar "x" a cada elemento de [Niño -> Grito], lo hacemos con otro map que podria usar otra funcion incognita pero hacemos que reciba "map ($ x) monstruos" que significa aplica este valor "x" a cada elemento de [Niño -> Grito]. Como vimos anteriormente esto nos da [[Grito]] entonces tenemos que aplanarlo, usamos "concat" que ya existe y labura esto perfecto [[x]] = [x]
+-- {la anterior es otra forma de aplicar lo que hicimos en la variante anterior, aca pensando en los elementos de "niño" y en la anterior pensando en los elementos de "monstruo"}
+-- 2) teniendo la [Grito] que necesitabamos ahora solo queremos aplicar a cada elemento de [Grito] la funcion "energiaDeGrito" y sumarlo, entonces hacemos eso donde primero mapeamos con "energiaDeGrito" a la [Grito] obteniendo una lista de enteros que podemos sumar finalmente con "sum"
+

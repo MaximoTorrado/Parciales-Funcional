@@ -169,5 +169,9 @@ ritualDeFechorias :: [Evento] -> Evento
 ritualDeFechorias eventos barbaro = any (\x -> x barbaro) eventos
 
 -- lo que hace ritual de fechorias es aplicar todos los elementos de una [Evento] a un barbaro, y fijarse si dicho barbaro pasa alguna por eso usamos "any", como los elementos son Evento que son funciones que 
--- reciben un barbaro y devuelven un bool entonces al "any" le pasamos una funcion incognita y la [Evento], la incognita va recibiendo los elementos con "x" y los aplica a "barbaro"
+-- reciben un barbaro y devuelven un bool entonces al "any" le pasamos una funcion incognita y la [Evento], la incognita va recibiendo los elementos con "x" y los aplica a "barbaro" 
+
+
+
+
 
